@@ -1,0 +1,174 @@
+-- Objects
+ 
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local Player = Instance.new("TextBox")
+local TPplayer = Instance.new("TextButton")
+local LoopTP = Instance.new("TextButton")
+local TPtool = Instance.new("TextButton")
+local TPValue = Instance.new("TextLabel")
+ 
+-- Properties
+ 
+ScreenGui.Parent = game.CoreGui
+ 
+Frame.Parent = ScreenGui
+Frame.Active = true
+Frame.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+Frame.BackgroundTransparency = 0.10000000149012
+Frame.BorderColor3 = Color3.new(1, 1, 1)
+Frame.Draggable = true
+Frame.Position = UDim2.new(0.7, 0, 0.7, 0)
+Frame.Selectable = true
+Frame.Size = UDim2.new(0, 215, 0, 73)
+ 
+Player.Name = "Player"
+Player.Parent = Frame
+Player.AnchorPoint = Vector2.new(0.5, 0)
+Player.BackgroundColor3 = Color3.new(0.165, 0.165, 0.165)
+Player.BorderColor3 = Color3.new(1, 1, 1)
+Player.Position = UDim2.new(0.259, 0, 0.07, 0)
+Player.Size = UDim2.new(0, 100, -0.00999999978, 30)
+Player.Font = Enum.Font.SourceSansBold
+Player.Text = "Set Player"
+Player.TextColor3 = Color3.new(1, 1, 1)
+Player.TextSize = 14
+ 
+TPplayer.Name = "TPplayer"
+TPplayer.Parent = Frame
+TPplayer.AnchorPoint = Vector2.new(0.5, 0)
+TPplayer.BackgroundColor3 = Color3.new(0.165, 0.165, 0.165)
+TPplayer.BorderColor3 = Color3.new(1, 1, 1)
+TPplayer.Position = UDim2.new(0.259, 0, 0.525, 0)
+TPplayer.Size = UDim2.new(0, 100, -0.00999999978, 30)
+TPplayer.AutoButtonColor = false
+TPplayer.Font = Enum.Font.SourceSansBold
+TPplayer.Text = "TP To Player"
+TPplayer.TextColor3 = Color3.new(1, 1, 1)
+TPplayer.TextSize = 14
+ 
+LoopTP.Name = "LoopTP"
+LoopTP.Parent = Frame
+LoopTP.AnchorPoint = Vector2.new(0.5, 0)
+LoopTP.BackgroundColor3 = Color3.new(0.165, 0.165, 0.165)
+LoopTP.BorderColor3 = Color3.new(1, 1, 1)
+LoopTP.Position = UDim2.new(0.741, 0, 0.07, 0)
+LoopTP.Size = UDim2.new(0, 100, -0.00999999978, 30)
+LoopTP.AutoButtonColor = false
+LoopTP.Font = Enum.Font.SourceSansBold
+LoopTP.Text = "Loop Teleport Off"
+LoopTP.TextColor3 = Color3.new(1, 1, 1)
+LoopTP.TextSize = 14
+ 
+TPtool.Name = "TPtool"
+TPtool.Parent = Frame
+TPtool.AnchorPoint = Vector2.new(0.5, 0)
+TPtool.BackgroundColor3 = Color3.new(0.165, 0.165, 0.165)
+TPtool.BorderColor3 = Color3.new(1, 1, 1)
+TPtool.Position = UDim2.new(0.741, 0, 0.525, 0)
+TPtool.Size = UDim2.new(0, 100, -0.00999999978, 30)
+TPtool.AutoButtonColor = false
+TPtool.Font = Enum.Font.SourceSansBold
+TPtool.Text = "Teleport Tool"
+TPtool.TextColor3 = Color3.new(1, 1, 1)
+TPtool.TextSize = 14
+ 
+TPValue.Name = "TPValue"
+TPValue.Parent = Frame
+TPValue.BackgroundColor3 = Color3.new(0, 0, 0)
+TPValue.BackgroundTransparency = 1
+TPValue.BorderColor3 = Color3.new(1, 1, 1)
+TPValue.BorderSizePixel = 2
+TPValue.Position = UDim2.new(1000000000, 0, 1000000000, 0)
+TPValue.Size = UDim2.new(0, 10, 0, 10)
+TPValue.Font = Enum.Font.Cartoon
+TPValue.Visible = false
+TPValue.Text = "No Player Selected"
+TPValue.TextScaled = false
+TPValue.TextSize = 10
+ 
+Player.FocusLost:connect(function()
+	for i,v in pairs(game.Players:GetChildren()) do
+		if (string.sub(string.lower(v.Name),1,string.len(Player.Text))) == string.lower(Player.Text) then
+			print("Selected "..v.Name)
+			TPValue.Text = v.Name
+			Player.Text = v.Name
+			wait(2)
+			Player.Text = "Set Player"
+		end
+	end
+end)
+ 
+TPplayer.MouseButton1Down:connect(function()
+	if TPValue.Text == "No Player Selected" then
+		print("No Player Selected")
+		TPplayer.Text = "No Player Selected"
+		wait(2)
+		TPplayer.Text = "TP To Player"
+	else
+		TPtext = game.CoreGui.ScreenGui.Frame.TPValue.Text
+		PlayerSelected = game:GetService("Players")[tostring(TPtext)].Character.HumanoidRootPart.CFrame
+		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = PlayerSelected
+	end
+end)
+ 
+LoopTP.MouseButton1Down:connect(function()
+    if LoopTPEnabled == false then
+		LoopTPEnabled = true
+		LoopTP.Text = "Loop Teleport On"
+	elseif TPValue.Text == "No Player Selected" then
+		print("No Player Selected")
+		LoopTP.Text = "No Player Selected"
+		wait(2)
+		LoopTP.Text = "Loop Teleport Off"
+	else
+		LoopTPEnabled = false
+		LoopTP.Text = "Loop Teleport Off"
+	end
+end)
+ 
+TPtool.MouseButton1Down:connect(function()
+	bin=Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
+	bin.Name = "Teleport"
+ 
+	function teleportPlayer(pos)
+ 
+	local player = game.Players.LocalPlayer
+	if player == nil or player.Character == nil then return end
+ 
+	local char = player.Character
+ 
+	char:MoveTo(pos)
+ 
+	end
+ 
+ 
+	enabled = true
+	function onButton1Down(mouse)
+	if not enabled then
+	return
+	end
+ 
+	local player = game.Players.LocalPlayer
+	if player == nil then return end
+	local cf = mouse.Hit
+	teleportPlayer(cf.p)
+ 
+	end
+ 
+	function onSelected(mouse)
+	mouse.Button1Down:connect(function() onButton1Down(mouse) end)
+	end
+ 
+	bin.Selected:connect(onSelected)
+end)
+ 
+game:GetService('RunService').Stepped:connect(function()
+	if TPValue.Text ~= "No Player Selected" then
+		if LoopTPEnabled then
+			TPtext = game.CoreGui.ScreenGui.Frame.TPValue.Text
+        	PlayerSelected = game:GetService("Players")[tostring(TPtext)].Character.HumanoidRootPart.CFrame
+        	game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = PlayerSelected
+		end
+	end
+end)
